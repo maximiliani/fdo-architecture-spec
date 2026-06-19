@@ -66,7 +66,9 @@ Typical contributions include:
 - Consistency fixes across sections
 - Issue reports and discussion proposals
 
-Please use **GitHub Issues** for discussions and **Pull Requests** for proposed changes. 
+Please read the policy on how to contribute:
+  https://github.com/fairdo-org/fdo-architecture-spec/blob/main/Contribution-Specification-Development-Policy-v1.0.pdf
+  
 Contributions should follow the architectural scope and terminology defined by the FDO Forum.
 
 ## Governance
