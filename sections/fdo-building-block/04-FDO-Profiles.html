@@ -90,12 +90,12 @@
   </tr>
   <tr>
     <td>0.FDO/Attribute</td>
-    <td><em>0.FDO/Attribute</em> defines the list of attribute definitions that MUST be instantiated in any FDO instantiating this profile. The cardinality of the attribute definitions MUST be respected in the FDOs. <em>0.FDO/Attribute</em> is repeated at least three times, once with each of the values <em>0.FDO/Type</em>, <em>0.FDO/Profile</em>, <em>0.FDO/Data</em>, because these are the mandatory attributes that MUST be contained in any FDO. Additional attributes can be added by further repeating the <em>0.FDO/Attribute</em> with other values. </td>
-    <td>3..*</td>
+    <td><em>0.FDO/Attribute</em> defines the list of attribute definitions that MUST be instantiated in any FDO instantiating this profile. The cardinality of the attribute definitions MUST be respected in the FDOs. Every profile SHOULD at least contain one attribute which is not inherited from another profile by using <em>0.FDO/Extends</em>.</td>
+    <td>0..*</td>
   </tr>
   <tr>
     <td>0.FDO/Extends</td>
-    <td>If this profile is an extension of another profile, this attribute specifies the PID of the parent profile (see [R4-11]).</td>
+    <td>If this profile is an extension of another profile, this attribute specifies the PID of the parent profile (see [R4-11]). Clients MAY implicitly extend from <em>0.FDO/Root</em>, as any FDO must comply with the root profile in any case.</td>
     <td>0..*</td>
   </tr>
   <tr>
