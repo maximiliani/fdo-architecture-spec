@@ -1,7 +1,7 @@
 <h3>Building Blocks</h3>
 <section>
     <h4>PID & Resolution</h4>
-    Define the deterministic steps how a PID is unambiguously mapped to its FDO record. This involves:
+    <p>Define the deterministic steps how a PID is unambiguously mapped to its FDO record. This involves:</p>
     <dl>
       <dt>[I1-1] PID System</dt>
       <dd>Which PID System/s is/are used?
@@ -16,10 +16,10 @@
 <section>
     <h4>Attribute Mapping</h4>
     <dl>
-        <dt>[I2-1]: Map Mandatory Attributes</dt>
+        <dt>[I2-1] Map Mandatory Attributes</dt>
         <dd>
-            Map the conceptual mandatory attributes (see Table 2) to real attribute definitions: `0.FDO/Type`,
-            `0.FDO/Profile`, and `0.FDO/Data`.
+            Map the conceptual mandatory attributes (see Table 2) to real attribute definitions: 0.FDO/Type,
+            0.FDO/Profile, and 0.FDO/Data.
         </dd>
         <dt>[I2-2] Map Optional Attributes (Optional)</dt>
         <dd>
@@ -27,6 +27,25 @@
         </dd>
         <dt>[I2-3] Map Other Attributes (Optional)</dt>
         <dd>Here you can define other attributes that are frequently used by your implementation.</dd>
+    </dl>
+</section>
+
+<section>
+    <h4>FDO records</h4>
+    <p>Specify how an FDO record is realized by the given FDO implementation.</p>
+    <dl>
+        <dt>[I3-1] Map FDO record → implementation structure</dt>
+        <dd>
+            Starting with the conceptional FDO record containing attributes a<sub>1</sub>,...,a<sub>n</sub>, map this
+            record to an implementation structure that contains implementation-specific attributes
+            a'<sub>1</sub>,...,a'<sub>n</sub>.
+        </dd>
+        <dt>[I3-2] Map implementation structure → FDO record</dt>
+        <dd>
+            Starting with an implementation structure that contains implementation-specific attributes
+            a'<sub>1</sub>,...,a'<sub>n</sub>, map this structure to a conceptional FDO record containing attributes
+            a<sub>1</sub>,...,a<sub>n</sub>.
+        </dd>
     </dl>
 </section>
 
