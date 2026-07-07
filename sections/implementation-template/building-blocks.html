@@ -3,12 +3,11 @@
     <h4>PID & Resolution</h4>
     <p>Define the deterministic steps how a PID is unambiguously mapped to its FDO record. This involves:</p>
     <dl>
-      <dt>[I1-1] PID System</dt>
-      <dd>Which PID System/s is/are used?
-      </dd>
-        <dt>[I1-2] PID Detection</dt>
+        <dt>[I1-1] PID system</dt>
+        <dd>Which PID System/s is/are used?</dd>
+        <dt>[I1-2] PID detection</dt>
         <dd>Specify the most narrow regular expression for this PID.</dd>
-        <dt>[I1-3] PID Resolution</dt>
+        <dt>[I1-3] PID resolution</dt>
         <dd>Specify the steps that need to be taken to resolve the PID into the FDO record.</dd>
     </dl>
 </section>
@@ -16,16 +15,16 @@
 <section>
     <h4>Attribute Mapping</h4>
     <dl>
-        <dt>[I2-1] Map Mandatory Attributes</dt>
+        <dt>[I2-1] Map mandatory attributes</dt>
         <dd>
             Map the conceptual mandatory attributes (see Table 2) to real attribute definitions: 0.FDO/Type,
             0.FDO/Profile, and 0.FDO/Data.
         </dd>
-        <dt>[I2-2] Map Optional Attributes (Optional)</dt>
+        <dt>[I2-2] Map optional attributes (Optional)</dt>
         <dd>
             It is recommended to also provide mappings for the conceptual optional attributes (see Table X; to be done).
         </dd>
-        <dt>[I2-3] Map Other Attributes (Optional)</dt>
+        <dt>[I2-3] Map other attributes (Optional)</dt>
         <dd>Here you can define other attributes that are frequently used by your implementation.</dd>
     </dl>
 </section>
@@ -49,3 +48,23 @@
     </dl>
 </section>
 
+<section>
+    <h4>FDO Profiles</h4>
+    <dl>
+        <dt>[I4-1] Profile representation</dt>
+        <dd>
+            Each profile is itself an FDO. You must specify how the FDO profile is represented in the given
+            implementation (i.e., how the FDO looks like; this can be understood as a recipe for building FDO profiles
+            in the given FDO implementation).
+            <br><em>Note: In the validations chapter, you need to define an algorithm for
+            a machine to read and interpret a profile in the given implementation in order to perform validation of
+            records against the profile.</em>
+        </dd>
+        <dt>[I4-2] Profile definition profile (Optional)</dt>
+        <dd>Give the PID for the profile definition profile from your implementation.</dd>
+        <dt>[I4-3] Root profile (Optional)</dt>
+        <dd>Give the PID for the root profile from your implementation.</dd>
+        <dt>[I4-4] Profile extension (Optional)</dt>
+        <dd>Specify how the extension mechanism of profiles works within your implementation.</dd>
+    </dl>
+</section>
