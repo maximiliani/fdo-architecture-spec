@@ -9,7 +9,6 @@ on:
 permissions:
   contents: write
   pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -21,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
