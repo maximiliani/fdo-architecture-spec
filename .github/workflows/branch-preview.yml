@@ -2,8 +2,8 @@ name: Deploy branch preview to Pages
 
 on:
   push:
-    branches:
-      - dev
+    branches-ignore:
+      - main
 
 permissions:
   contents: write
@@ -22,16 +22,22 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Inject preview banner (if deploying)
-        if: github.event.action != 'closed'
+      - name: Sanitize branch name
+        id: sanitize
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          SANITIZED=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9._-]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
+          echo "branch_name=$SANITIZED" >> $GITHUB_OUTPUT
+
+      - name: Inject preview banner
         run: |
           cat > /tmp/banner.html << 'EOF'
-          <div id="pr-preview-banner" class="pr-preview-banner">
-            ⚠️ This is a preview build for <a href="https://github.com/${{ github.repository }}/tree/${{ github.ref }}" target="_blank" rel="noopener noreferrer">Branch ${{ github.ref }}</a>
-            <span id="pr-status"></span>
+          <div id="branch-preview-banner" class="branch-preview-banner">
+            🔧 This is a preview build for <a href="https://github.com/${{ github.repository }}/tree/${{ github.ref }}" target="_blank" rel="noopener noreferrer">Branch ${{ github.ref_name }}</a>
+            <span id="branch-status"></span>
           </div>
           <style>
-            .pr-preview-banner {
+            .branch-preview-banner {
               position: fixed;
               top: 0;
               left: 0;
@@ -45,10 +51,7 @@ jobs:
               box-shadow: 0 2px 4px rgba(0,0,0,0.2);
               font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             }
-            .pr-preview-banner.inactive {
-              background: #9e9e9e;
-            }
-            .pr-preview-banner a {
+            .branch-preview-banner a {
               color: #000;
               text-decoration: underline;
             }
@@ -60,10 +63,44 @@ jobs:
 
           sed -i '/<\/body>/r /tmp/banner.html' index.html
 
+      - name: Cleanup orphaned previews
+        run: |
+          git fetch origin gh-pages --depth=1
+          git checkout gh-pages
+          
+          if [ -d "preview" ]; then
+            for dir in preview/*/; do
+              if [ -d "$dir" ]; then
+                dirname=$(basename "$dir")
+                
+                if [[ $dirname == PR-* ]]; then
+                  pr_number=${dirname#PR-}
+                  if ! curl -sf "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number" | grep -q '"state": "open"'; then
+                    echo "Removing orphaned PR preview: $dirname"
+                    rm -rf "$dir"
+                  fi
+                else
+                  branch_name="$dirname"
+                  if ! git ls-remote --heads origin "refs/heads/$branch_name" | grep -q .; then
+                    echo "Removing orphaned branch preview: $dirname"
+                    rm -rf "$dir"
+                  fi
+                fi
+              fi
+            done
+          fi
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Cleanup orphaned previews" || echo "No cleanup needed"
+          git push origin gh-pages
+
       - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          source-dir: .
-          preview-branch: gh-pages
-          umbrella-dir: branch-previews
-          action: auto
+          folder: .
+          branch: gh-pages
+          target-folder: preview/${{ steps.sanitize.outputs.branch_name }}
+          clean: false
+          force: false
