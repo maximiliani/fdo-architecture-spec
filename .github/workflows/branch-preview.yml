@@ -33,7 +33,7 @@ jobs:
         run: |
           cat > /tmp/banner.html << 'EOF'
           <div id="branch-preview-banner" class="branch-preview-banner">
-            🔧 This is a preview build for <a href="https://github.com/${{ github.repository }}/tree/${{ github.ref }}" target="_blank" rel="noopener noreferrer">Branch ${{ github.ref_name }}</a>
+            ⚠️🔧 This is a preview build for <a href="https://github.com/${{ github.repository }}/tree/${{ github.ref }}" target="_blank" rel="noopener noreferrer">Branch ${{ github.ref_name }}</a>
             <span id="branch-status"></span>
           </div>
           <style>

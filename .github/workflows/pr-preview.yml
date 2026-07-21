@@ -26,7 +26,7 @@ jobs:
         run: |
           cat > /tmp/banner.html << 'EOF'
           <div id="pr-preview-banner" class="pr-preview-banner">
-            📋 This is a preview build for <a href="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}" target="_blank" rel="noopener noreferrer">PR #${{ github.event.pull_request.number }}</a>
+            ⚠️ This is a preview build for <a href="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}" target="_blank" rel="noopener noreferrer">PR #${{ github.event.pull_request.number }}</a>
             <span id="pr-status"></span>
           </div>
           <style>
