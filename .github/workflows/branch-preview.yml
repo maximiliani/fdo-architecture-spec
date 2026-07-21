@@ -67,6 +67,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          ORIGINAL_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git fetch origin gh-pages --depth=1
           git checkout gh-pages
@@ -98,6 +99,7 @@ jobs:
           git add -A
           git commit -m "Cleanup orphaned previews" || echo "No cleanup needed"
           git push origin gh-pages
+          git checkout $ORIGINAL_BRANCH
 
       - name: Deploy preview
         uses: JamesIves/github-pages-deploy-action@v4
