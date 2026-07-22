@@ -145,4 +145,3 @@ jobs:
     needs: deploy-preview
     if: github.event.action != 'closed'
     uses: ./.github/workflows/cleanup-orphans.yml
-    secrets: inherit
