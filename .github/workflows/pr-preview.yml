@@ -86,10 +86,6 @@ jobs:
           clean: false
           force: false
 
-      - name: Trigger orphan cleanup
-        if: github.event.action != 'closed' && steps.deploy.outcome == 'success'
-        uses: ./.github/workflows/cleanup-orphans.yml
-
       - name: Post/Update PR comment
         if: always() && (github.event.action == 'closed' || steps.deploy.outcome == 'success')
         uses: actions/github-script@v7
@@ -144,3 +140,9 @@ jobs:
                 body: commentBody,
               });
             }
+
+  cleanup:
+    needs: deploy-preview
+    if: github.event.action != 'closed'
+    uses: ./.github/workflows/cleanup-orphans.yml
+    secrets: inherit
