@@ -23,10 +23,13 @@ jobs:
 
       - name: Inject preview banner (if PR is open)
         if: github.event.action != 'closed'
+        env:
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           cat > /tmp/banner.html << 'EOF'
           <div id="pr-preview-banner" class="pr-preview-banner">
-            ⚠️ This is a preview build for <a href="https://github.com/${{ github.repository }}/pull/${{ github.event.pull_request.number }}" target="_blank" rel="noopener noreferrer">PR #${{ github.event.pull_request.number }}</a>
+            📋 This is a preview build for <a href="https://github.com/${REPOSITORY}/pull/${PR_NUMBER}" target="_blank" rel="noopener noreferrer">PR #${PR_NUMBER}</a>
             <span id="pr-status"></span>
           </div>
           <style>
@@ -57,7 +60,7 @@ jobs:
           </style>
           <script>
             (function() {
-              fetch('https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}')
+              fetch('https://api.github.com/repos/${REPOSITORY}/pulls/${PR_NUMBER}')
                 .then(r => r.json())
                 .then(data => {
                   if (data && (data.merged_at || data.closed_at)) {
@@ -73,6 +76,8 @@ jobs:
           sed -i '/<\/body>/r /tmp/banner.html' index.html
 
       - name: Deploy preview
+        id: deploy
+        if: github.event.action != 'closed'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: .
@@ -82,7 +87,7 @@ jobs:
           force: false
 
       - name: Post/Update PR comment
-        if: always()
+        if: always() && (github.event.action == 'closed' || steps.deploy.outcome == 'success')
         uses: actions/github-script@v7
         with:
           script: |
@@ -109,7 +114,7 @@ jobs:
             ⚠️ This preview is automatically updated with each commit. The banner on the preview page will show when the PR is merged or closed.`;
             }
             
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
@@ -135,42 +140,3 @@ jobs:
                 body: commentBody,
               });
             }
-
-      - name: Cleanup orphaned previews
-        if: github.event.action != 'closed'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd $(mktemp -d)
-          git clone --depth 1 --single-branch --branch gh-pages \
-            https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git \
-            gh-pages
-          cd gh-pages
-          
-          if [ -d "preview" ]; then
-            for dir in preview/*/; do
-              if [ -d "$dir" ]; then
-                dirname=$(basename "$dir")
-                
-                if [[ $dirname == PR-* ]]; then
-                  pr_number=${dirname#PR-}
-                  if ! curl -sf "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number" | grep -q '"state": "open"'; then
-                    echo "Removing orphaned PR preview: $dirname"
-                    rm -rf "$dir"
-                  fi
-                else
-                  branch_name="$dirname"
-                  if ! git ls-remote --heads origin "refs/heads/$branch_name" | grep -q .; then
-                    echo "Removing orphaned branch preview: $dirname"
-                    rm -rf "$dir"
-                  fi
-                fi
-              fi
-            done
-          fi
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Cleanup orphaned previews" || echo "No cleanup needed"
-          git push origin gh-pages

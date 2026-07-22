@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: preview-${{ github.ref }}
@@ -24,16 +23,20 @@ jobs:
 
       - name: Sanitize branch name
         id: sanitize
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
           SANITIZED=$(echo "$BRANCH_NAME" | sed 's/[^a-zA-Z0-9._-]/-/g' | sed 's/--*/-/g' | sed 's/^-//;s/-$//')
           echo "branch_name=$SANITIZED" >> $GITHUB_OUTPUT
 
       - name: Inject preview banner
+        env:
+          REPOSITORY: ${{ github.repository }}
+          BRANCH_NAME: ${{ steps.sanitize.outputs.branch_name }}
         run: |
           cat > /tmp/banner.html << 'EOF'
           <div id="branch-preview-banner" class="branch-preview-banner">
-            ⚠️🔧 This is a preview build for <a href="https://github.com/${{ github.repository }}/tree/${{ github.ref }}" target="_blank" rel="noopener noreferrer">Branch ${{ github.ref_name }}</a>
+            🔧 This is a preview build for <a href="https://github.com/${REPOSITORY}/tree/${BRANCH_NAME}" target="_blank" rel="noopener noreferrer">Branch ${BRANCH_NAME}</a>
             <span id="branch-status"></span>
           </div>
           <style>
@@ -62,44 +65,6 @@ jobs:
           EOF
 
           sed -i '/<\/body>/r /tmp/banner.html' index.html
-
-      - name: Cleanup orphaned previews
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          cd $(mktemp -d)
-          git clone --depth 1 --single-branch --branch gh-pages \
-            https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git \
-            gh-pages
-          cd gh-pages
-          
-          if [ -d "preview" ]; then
-            for dir in preview/*/; do
-              if [ -d "$dir" ]; then
-                dirname=$(basename "$dir")
-                
-                if [[ $dirname == PR-* ]]; then
-                  pr_number=${dirname#PR-}
-                  if ! curl -sf "https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number" | grep -q '"state": "open"'; then
-                    echo "Removing orphaned PR preview: $dirname"
-                    rm -rf "$dir"
-                  fi
-                else
-                  branch_name="$dirname"
-                  if ! git ls-remote --heads origin "refs/heads/$branch_name" | grep -q .; then
-                    echo "Removing orphaned branch preview: $dirname"
-                    rm -rf "$dir"
-                  fi
-                fi
-              fi
-            done
-          fi
-          
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Cleanup orphaned previews" || echo "No cleanup needed"
-          git push origin gh-pages
 
       - name: Deploy preview
         uses: JamesIves/github-pages-deploy-action@v4
