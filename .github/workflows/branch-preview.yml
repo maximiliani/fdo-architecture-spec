@@ -32,11 +32,12 @@ jobs:
       - name: Inject preview banner
         env:
           REPOSITORY: ${{ github.repository }}
-          BRANCH_NAME: ${{ steps.sanitize.outputs.branch_name }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          SANITIZED_BRANCH_NAME: ${{ steps.sanitize.outputs.branch_name }}
         run: |
           cat > /tmp/banner.html << EOF
           <div id="branch-preview-banner" class="branch-preview-banner">
-            🔧 This is a preview build for <a href="https://github.com/${REPOSITORY}/tree/${BRANCH_NAME}" target="_blank" rel="noopener noreferrer">Branch ${BRANCH_NAME}</a>
+            🔧 This is a preview build for <a href="https://github.com/${REPOSITORY}/tree/${BRANCH_NAME}" target="_blank" rel="noopener noreferrer">Branch ${SANITIZED_BRANCH_NAME}</a>
             <span id="branch-status"></span>
           </div>
           <style>
