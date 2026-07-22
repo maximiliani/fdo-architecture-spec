@@ -27,7 +27,7 @@ jobs:
           REPOSITORY: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          cat > /tmp/banner.html << 'EOF'
+          cat > /tmp/banner.html << EOF
           <div id="pr-preview-banner" class="pr-preview-banner">
             📋 This is a preview build for <a href="https://github.com/${REPOSITORY}/pull/${PR_NUMBER}" target="_blank" rel="noopener noreferrer">PR #${PR_NUMBER}</a>
             <span id="pr-status"></span>
@@ -82,7 +82,7 @@ jobs:
         with:
           folder: .
           branch: gh-pages
-          target-folder: preview/PR-${{ github.event.pull_request.number }}
+          target-folder: preview/pr-${{ github.event.pull_request.number }}
           clean: false
           force: false
 
