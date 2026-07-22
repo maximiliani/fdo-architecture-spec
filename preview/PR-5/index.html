@@ -258,7 +258,7 @@
     </section>
   </body>
 <div id="pr-preview-banner" class="pr-preview-banner">
-  ⚠️ This is a preview build for <a href="https://github.com/maximiliani/fdo-architecture-spec/pull/5" target="_blank" rel="noopener noreferrer">PR #5</a>
+  📋 This is a preview build for <a href="https://github.com/${REPOSITORY}/pull/${PR_NUMBER}" target="_blank" rel="noopener noreferrer">PR #${PR_NUMBER}</a>
   <span id="pr-status"></span>
 </div>
 <style>
@@ -289,7 +289,7 @@
 </style>
 <script>
   (function() {
-    fetch('https://api.github.com/repos/maximiliani/fdo-architecture-spec/pulls/5')
+    fetch('https://api.github.com/repos/${REPOSITORY}/pulls/${PR_NUMBER}')
       .then(r => r.json())
       .then(data => {
         if (data && (data.merged_at || data.closed_at)) {
