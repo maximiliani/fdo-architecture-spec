@@ -5,7 +5,7 @@
 <ol>
     <li>Attribute definitions are types for properties of an <a>FDO</a> and are instantiated by <a>attributes</a> in the <a>FDO record</a>.
     </li>
-    <li>The value of the<a><em>0.FDO/Type</em></a> <a>attribute</a> in the <a>FDO record</a> is a type of the <a>resource</a> being represented by the
+    <li>The value of the <a><em>0.FDO/Type</em></a> <a>attribute</a> in the <a>FDO record</a> is a type of the <a>resource</a> being represented by the
         <a>FDO</a>.
     </li>
     <li>The value of the <a><em>0.FDO/Profile</em></a> <a>attribute</a> in the <a>FDO record</a> is a type of the <a>FDO record</a> (which instantiates the
@@ -13,14 +13,14 @@
     </li>
 </ol>
 All these types together form the type system.
-<h4 id="0.FDO-Type">The <dfn data-lt="FDO type|type|0.FDO/Type">0.FDO/Type</dfn> <a>attribute</a></h4>
+<h4 id="0.FDO-Type">The <dfn data-lt="FDO type|type">0.FDO/Type</dfn> <a>attribute</a></h4>
 <p>
     This section specifies the (declared) FDO Type (<i><a><em>0.FDO/Type</em></a></i>) as the value of the <a><em>0.FDO/Type</em></a>
-    <a>attribute</a>, which is instantiated in <a>FDO records</a> (2. in the above enumeration).
+    <a>attribute</a>,  which is instantiated in <a>FDO records</a> (2. in the above enumeration).
     This <a><em>0.FDO/Type</em></a> <a>attribute</a> is an intentionally chosen entry point that signals some default processing semantics for the <a>FDO</a>.
     Other facets of the <a>FDO type</a> could be derived independently of the <a><em>0.FDO/Type</em></a> <a>attribute</a> using
-    other typing mechanisms, e.g., by inspecting the presence of other record <a>attributes</a>. <!--(1. and 3.
-    in above enumeration)-->
+    other typing mechanisms, e.g., by inspecting the presence of other record <a>attributes</a> <!--(1. and 3.
+    in above enumeration)-->.
     Please note that we will refer to the <a><em>0.FDO/Type</em></a> <a>attribute</a> as the “FDO type”
     in the following.
 </p>
@@ -41,16 +41,20 @@ All these types together form the type system.
     <b>The <a>FDO Type</a> of <a>FDOs</a> that belong to the Type System:</b>
     <dt><h4 class="rule-heading" id="rule-r10_3">[R10-3] Type System <a>FDO Types</a></h4></dt>
     <dd>
-        <a>Profile definitions</a>, <a>attribute definitions</a>, <a>syntax definitions</a>, and <a>FDOs</a> representing the
-        <a>FDO type</a> (see <a href="rule-r10_6"></a>) are special <a>FDOs</a> in the sense that they are part of the type system.
-        They MUST have the following <a>FDO type</a>:
-        <ul>
-            <li>A <a>profile</a> has the <a>FDO type</a> <em>“FDO_Profile”</em>.</li>
-            <li>An <a>attribute definition</a> has the <a>FDO type</a> <em>“FDO_Attribute_Definition”</em>.</li>
-            <li>A <a>syntax definition</a> has the <a>FDO type</a> <em>“FDO_Syntax_Definition”</em>.</li>
-            <li>An <a>FDO</a> representing an <a>FDO type</a> has the <a>FDO type</a> <em>“FDO_Type_Definition”</em>.</li>
-        </ul>
-        Adding additional <a>FDO types</a> to these <a>FDOs</a> is allowed.
+        <p>
+            <a>Profiles</a>, <a>attribute definitions</a>, and <a>syntax definitions</a> are special <a>FDOs</a> in the
+            sense that they are part of the type system. All of these FDOs do not have a data <a>bit-sequence</a> they
+            refer to, since they consist of only meta-information in the <a>FDO record</a>. Hence, the <a>FDO record</a>
+            itself is treated as the data <a>bit-sequence</a> of these FDOs. This makes the <a>profile</a> of the FDO
+            effectively the <a>type</a> of the FDO because the <a>profile</a> fully describes the structure of the
+            <a>record</a>.
+        <br>
+            Consequently, for all <a>profiles</a>, <a>attribute definitions</a>, and <a>syntax definitions</a>, the
+            <a><em>0.FDO/Type</em></a> <a>attribute</a> MUST have at least the value <a><em>0.FDO/Profile</em></a>
+            (hence, it points to the <a>profile</a> using <a>attribute referencing</a>). Adding additional
+            <a>FDO types</a> to these <a>FDOs</a> is allowed.
+        </p>
+
     </dd>
 
     <b><a>FDO Types</a> are defined by communities:</b>
@@ -96,7 +100,7 @@ All these types together form the type system.
 
 <h4 id="operation-association-mechanisms">Operation Association Mechanisms</h4>
 <p>
-    <a>Types</a> MAY be used to associate <a>FDOs</a> with <a>operations</a>.
+    <a>Types</a> MAY be used to associate <a>FDOs</a> to <a>operations</a>.
     The specification of <a>FDO operations</a> is still in an early state and not yet completely understood.
     A more comprehensive list of requirements beyond <a href="#rule-r10_10"></a> – <a href="#rule-r10_13"></a> will be
     included in a later version of this document.
@@ -137,7 +141,7 @@ All these types together form the type system.
     <dd>
         To associate an <a>operation</a> with an <a>FDO</a>, types SHOULD be used (i.e., <a>FDO attribute</a>(s), <a>FDO Profile</a>(s) and the
         <a>FDO types</a> as defined in <a href="#0.FDO-Type"></a>).
-        In detail, to associate an operation with an <a>FDO</a>, (at least)
+        In detail, to associate an operation to an <a>FDO</a>, (at least)
         one of the following operation association mechanisms SHOULD be applied:
         <ul>
             <li>
@@ -155,7 +159,7 @@ All these types together form the type system.
         More information on the <a>operation association mechanisms</a> is available in the paper [[FDO-Operations-2025]].
     </dd>
 
-    <dt><h4 class="rule-heading" id="rule-r10_15">[R10-15] List Operations</h4></dt>
+    <dt><h4 class="rule-heading" id="rule-r10_15">[R10-15] List Operations</h4>></dt>
     <dd> Providing an operation to list available <a>operations</a> for specific <a>FDO types</a> is strongly RECOMMENDED.
     </dd>
 </dl>
